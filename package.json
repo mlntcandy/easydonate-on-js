@@ -1,0 +1,26 @@
+{
+  "name": "easydonate-on-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "test": "npx mocha",
+    "build": "npx tsc"
+  },
+  "author": "Mlntcandy",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.6.3",
+    "dotenv": "^16.0.1",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "node-fetch": "^3.2.10"
+  }
+}
