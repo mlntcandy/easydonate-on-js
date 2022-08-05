@@ -21,12 +21,4 @@ describe('basic', () => {
         // assert.ok(shop.description)
         assert.ok(shop.logo)
     })
-
-    it('should throw a ratelimit error', async () => {
-        const easyDonate = new EasyDonate(shopKey)
-        let spamApi = async () => {
-            for (let i = 0; i < 100; i++) await easyDonate.getShopInfo()
-        }
-        await assert.rejects(spamApi, EasyDonateRateLimitedError)
-    })
 })
