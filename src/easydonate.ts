@@ -96,7 +96,7 @@ export class EasyDonate {
         if (options?.fetchSubstitute) this.fetchSubstitute = options.fetchSubstitute
     }
 
-    private async request<T>(method: string, path: string, data: { [key: string]: string | number | boolean | null } | null) {
+    private async request<T>(method: string, path: string, data: { [key: string]: string | number | boolean | null } | null): Promise<T> {
         if (this.customRequestMaker) return await this.customRequestMaker(method, path, formatQuery(data))
         const query = data ? '?' + new URLSearchParams(formatQuery(data)) : ''
 
