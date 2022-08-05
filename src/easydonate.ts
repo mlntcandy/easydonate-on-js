@@ -1,92 +1,7 @@
 import fetch from 'node-fetch'
 
-import { EasyDonateError, EasyDonateRateLimitedError, EasyDonateRequestError } from "./errors.js"
+import { EasyDonateError, EasyDonateRateLimitedError, EasyDonateRequestError, types } from './index.js'
 
-export type EasyDonateResponse<T> = {
-    success: true
-    response: T
-} | {
-    success: false
-    response: string
-    error_code: number
-}
-
-type EasyDonateServer = {
-    id: number
-    name: string
-    ip: string
-    port: number
-    version: string
-    is_port_hidden: boolean
-    hide_ip: boolean
-    is_hidden: boolean
-    is_plugin_installed: boolean
-    shop_id: number
-    created_at: string
-    updated_at: string
-    sort_index: number | null // (not in docs)
-    disable_payments: boolean // (not in docs)
-    pivot?: {
-        shop_id: number
-        server_id: number
-    } // (not in docs)
-}
-
-type EasyDonateProduct = {
-    id: number
-    name: string
-    price: number
-    old_price: number | null
-    type: "item" | "group" | "currency" | "case" | "other" | "unknown"
-    number: number
-    is_hidden: boolean // (why is this not in docs, kinda useful)
-    commands: string[]
-    withdraw_commands: string[] | null // unsure
-    withdraw_commands_days: number | null
-    additional_fields: {[key: number]: {
-        name: string
-        type: "text" | "number"
-        default: string
-        description: string
-    }}
-    description: string | null
-    category_id: number | null // (not in docs) i have no idea tbh
-    image: string | null
-    first_delete: boolean
-    shop_id: number,
-    created_at: string
-    updated_at: string
-    sort_index: number | null
-}
-
-type EasyDonateServerWithProducts = EasyDonateServer & {
-    products: EasyDonateProduct[]
-}
-
-type EasyDonateProductWithServers = EasyDonateProduct & {
-    servers: EasyDonateServer[]
-}
-
-type EasyDonatePayment = {
-    id: number
-    customer: string
-    email: string | null
-    shop_id: number
-    server_id: number
-    status: number // this is the dumbest shit yet, anyways, 2 = paid
-    enrolled: number
-    payment_system: "Qiwi" | "Interkassa" | "test",
-    payment_type: "test" | "qiwi" | "card" | "mc" | "webmoney" | "yandex"
-    sent_commands: {
-        command: string
-        response: string
-    }[]
-    error: string | null // probably err string. FUCKING again, null in docs example with no further explanation
-    created_at: string
-    updated_at: string
-    products: EasyDonateProduct[]
-    server: EasyDonateServer
-}
 
 const formatQuery = (query: Record<string, (string | number | boolean | null)>) => {
     var newObject: Record<string, string> = {}
@@ -126,7 +41,7 @@ export class EasyDonate {
         if (response.status === 429) throw new EasyDonateRateLimitedError()
         if (response.status !== 200) throw new EasyDonateRequestError(response.status)
 
-        let responseObject = (await response.json()) as EasyDonateResponse<T>
+        let responseObject = (await response.json()) as types.Response<T>
 
         if (responseObject.success === false) throw new EasyDonateError(responseObject.response, responseObject.error_code)
 
@@ -134,108 +49,39 @@ export class EasyDonate {
     }
 
     public async getShopInfo() {
-        return await this.request<{
-            id: number
-            // rating: any // (not in docs) wtf is this
-            name: string
-            domain: string
-            last_domain: string
-            // delivery_type: 'rcon' | 'plugin' // (not in docs) probably like this
-            description: string | null
-            user_id: number
-            is_active: boolean
-            is_premium: boolean
-            hide_copyright: number
-            // hide_copyright_till: string | null // (not in docs) probably this
-            is_verified: boolean
-            vk_link: string | null
-            youtube_link: string | null
-            discord_link: string | null
-            twitch_link: string | null
-            tiktok_link: string | null
-            telegram_link: string | null // (not in docs)
-            theme_id: number
-            background: string
-            logo: string
-            favicon: string
-            css: string | null
-            enable_background_overlay: boolean
-            hide_side_image: boolean
-            hide_general_online: boolean
-            products_image_padding: number
-            hide_servers: boolean
-            test_mode: boolean
-            test_mode_from: string | null // (not in docs) pretty sure this is nullable
-            created_at: string
-            updated_at: string
-            side: string
-            key: string
-            color: string
-            require_email: boolean
-            pay_comission: number
-            particles: string
-            sort_index: number | null
-            https_redirect: boolean // (not in docs)
-            allow_nickname_spaces: boolean // (not in docs)
-            game_id: number // (not in docs) might be nullable, careful
-            hide_payment_instructions: boolean // (not in docs)
-            payment_instructions: string | null // (not in docs) might be nullable
-            use_cart: boolean // (not in docs)
-        }>('GET', 'shop', null)
+        return await this.request<types.Shop>('GET', 'shop', null)
     }
 
     public async getShopProducts() {
-        return await this.request<EasyDonateProductWithServers[]>('GET', 'shop/products', null)
+        return await this.request<types.ProductWithServers[]>('GET', 'shop/products', null)
     }
 
     public async getShopProductInfo(productId: number) {
-        return await this.request<EasyDonateProductWithServers>('GET', `shop/products/${productId}`, null)
+        return await this.request<types.ProductWithServers>('GET', `shop/products/${productId}`, null)
     }
 
     public async getShopServers() {
-        return await this.request<EasyDonateServerWithProducts[]>('GET', 'shop/servers', null)
+        return await this.request<types.ServerWithProducts[]>('GET', 'shop/servers', null)
     }
 
     public async getShopServerInfo(serverId: number) {
-        return await this.request<EasyDonateServerWithProducts>('GET', `shop/server/${serverId}`, null)
+        return await this.request<types.ServerWithProducts>('GET', `shop/server/${serverId}`, null)
     }
 
     public async getMassSales(onlyActive: boolean = true) {
-        return await this.request<{
-            id: number
-            name: string
-            sale: number
-            shop_id: number
-            start_at: string | null
-            expires_at: string | null
-            created_at: string
-            updated_at: string
-            products: EasyDonateProduct[]
-        }[]>('GET', 'shop/massSales', (onlyActive ? { where_active: true } : null))
+        return await this.request<types.MassSale[]>('GET', 'shop/massSales', (onlyActive ? { where_active: true } : null))
     }
 
     public async getShopCoupons(onlyActive: boolean = true) {
-        return await this.request<{
-            id: number
-            name: string
-            code: string
-            sale: number
-            limit: any // TODO: wtf is this? null in docs example
-            expires_at: string | null
-            shop_id: number
-            start_at: string | null
-            created_at: string
-            updated_at: string
-            products: EasyDonateProduct[]
-        }[]>('GET', 'shop/coupons', (onlyActive ? { where_active: true } : null))
+        return await this.request<types.Coupon[]>('GET', 'shop/coupons', (onlyActive ? { where_active: true } : null))
     }
 
     public async getSuccessfulPayments() {
-        return await this.request<EasyDonatePayment[]>('GET', 'shop/payments', null)
+        return await this.request<types.Payment[]>('GET', 'shop/payments', null)
     }
 
     public async getPaymentInfo(paymentId: number) {
-        return await this.request<EasyDonatePayment>('GET', `shop/payment/${paymentId}`, null)
+        return await this.request<types.Payment>('GET', `shop/payment/${paymentId}`, null)
     }
 
     public async createPayment(
@@ -248,7 +94,7 @@ export class EasyDonate {
     ) {
         return await this.request<{
             url: string
-            payment: EasyDonatePayment
+            payment: types.Payment
         }>('GET', 'shop/payment/create', {
             customer: customerNickname,
             server_id: serverId,
