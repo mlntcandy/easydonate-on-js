@@ -2,8 +2,7 @@ import 'dotenv/config'
 
 import assert from 'assert'
 
-import { EasyDonate } from '../dist/index.js'
-import { EasyDonateRateLimitedError } from '../dist/errors.js'
+import { EasyDonate, EasyDonateRateLimitedError } from '../dist/index.js'
 
 const shopKey = process.env.SHOP_KEY
 
