@@ -108,12 +108,13 @@ export class EasyDonate {
                 'Shop-Key': this.shopKey
             }
         })
+        
+        if (response.status === 429) throw new EasyDonateRateLimitedError()
+        if (response.status !== 200) throw new EasyDonateRequestError(response.status)
 
         let responseObject = (await response.json()) as EasyDonateResponse<T>
 
         if (responseObject.success === false) throw new EasyDonateError(responseObject.response, responseObject.error_code)
-        if (response.status === 429) throw new EasyDonateRateLimitedError()
-        if (response.status !== 200) throw new EasyDonateRequestError(response.status)
 
         return responseObject.response
     }
