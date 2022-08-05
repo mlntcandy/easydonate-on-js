@@ -10,6 +10,10 @@ If you encounter problems using this library, please, do not bug EasyDonate, ins
 ⚠ ***Note:** This library is not meant for frontend use! You **WILL leak** your shop key.*
 
 ## Usage
+```
+$ npm install easydonate-on-js
+```
+
 ```javascript
 // ES6
 import { EasyDonate } from 'easydonate-on-js';
