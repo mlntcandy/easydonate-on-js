@@ -3,6 +3,8 @@
 
 Based on `node-fetch` API.
 
+This library is unstable! Use it at your own risk! However, we use SemVer, so you can be sure that the API will not introduce breaking changes without a major version bump (1.\*.\* > 2.\*.\*).
+
 If you encounter problems using this library, please, do not bug EasyDonate, instead create an issue here.
 
 ⚠ ***Note:** This library is not meant for frontend use! You **WILL leak** your shop key.*
