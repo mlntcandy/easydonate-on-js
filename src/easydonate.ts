@@ -116,7 +116,7 @@ export class EasyDonate {
         return responseObject.response
     }
 
-    public async shop() {
+    public async getShopInfo() {
         return await this.request<{
             id: number
             name: string
@@ -156,23 +156,23 @@ export class EasyDonate {
         }>('GET', 'shop', null)
     }
 
-    public async shopProducts() {
+    public async getShopProducts() {
         return await this.request<EasyDonateProductWithServers[]>('GET', 'shop/products', null)
     }
 
-    public async shopProductInfo(productId: number) {
+    public async getShopProductInfo(productId: number) {
         return await this.request<EasyDonateProductWithServers>('GET', `shop/products/${productId}`, null)
     }
 
-    public async shopServers() {
+    public async getShopServers() {
         return await this.request<EasyDonateServerWithProducts[]>('GET', 'shop/servers', null)
     }
 
-    public async shopServerInfo(serverId: number) {
+    public async getShopServerInfo(serverId: number) {
         return await this.request<EasyDonateServerWithProducts>('GET', `shop/server/${serverId}`, null)
     }
 
-    public async massSales(onlyActive: boolean = true) {
+    public async getMassSales(onlyActive: boolean = true) {
         return await this.request<{
             id: number
             name: string
@@ -186,7 +186,7 @@ export class EasyDonate {
         }[]>('GET', 'shop/massSales', (onlyActive ? { where_active: true } : null))
     }
 
-    public async shopCoupons(onlyActive: boolean = true) {
+    public async getShopCoupons(onlyActive: boolean = true) {
         return await this.request<{
             id: number
             name: string
@@ -202,11 +202,11 @@ export class EasyDonate {
         }[]>('GET', 'shop/coupons', (onlyActive ? { where_active: true } : null))
     }
 
-    public async successfulPayments() {
+    public async getSuccessfulPayments() {
         return await this.request<EasyDonatePayment[]>('GET', 'shop/payments', null)
     }
 
-    public async paymentInfo(paymentId: number) {
+    public async getPaymentInfo(paymentId: number) {
         return await this.request<EasyDonatePayment>('GET', `shop/payment/${paymentId}`, null)
     }
 
