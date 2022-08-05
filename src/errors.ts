@@ -8,9 +8,16 @@ const easyDonateErrorCodes = {
 }
 
 export class EasyDonateRequestError extends Error {
+    name = 'EasyDonateRequestError'
     constructor(httpCode: number) {
         super(`EasyDonate API returned HTTP code ${httpCode}!`)
-        this.name = 'EasyDonateRequestError'
+    }
+}
+
+export class EasyDonateRateLimitedError extends Error {
+    name = 'EasyDonateRateLimitedError'
+    constructor() {
+        super('EasyDonate API: rate limit exceeded!')
     }
 }
 
