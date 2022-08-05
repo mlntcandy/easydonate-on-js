@@ -14,7 +14,7 @@ describe('basic', () => {
 
     it('should get shop info', async () => {
         const easyDonate = new EasyDonate(shopKey)
-        const shop = await easyDonate.shop()
+        const shop = await easyDonate.getShopInfo()
         // console.log(shop)
         assert.ok(shop)
         assert.ok(shop.name)
