@@ -83,7 +83,7 @@ const formatQuery = (query: Record<string, (string | number | boolean | null)>) 
     return newObject
 }
 
-type CustomRequestMaker = (method: string, path: string, query: Record<string, string>) => Promise<any>
+type CustomRequestMaker = (method: string, url: string, query: Record<string, string>) => Promise<any>
 
 export class EasyDonate {
     private shopKey: string
@@ -97,10 +97,11 @@ export class EasyDonate {
     }
 
     private async request<T>(method: string, path: string, data: { [key: string]: string | number | boolean | null } | null): Promise<T> {
-        if (this.customRequestMaker) return await this.customRequestMaker(method, path, formatQuery(data))
-        const query = data ? '?' + new URLSearchParams(formatQuery(data)) : ''
+        let url = `https://easydonate.ru/api/v3/${path}${data ? '?' + new URLSearchParams(formatQuery(data)) : ''}`
+        
+        if (this.customRequestMaker) return await this.customRequestMaker(method, url, formatQuery(data))
 
-        const response = await this.fetchSubstitute(`https://easydonate.ru/api/v3/${path}`, {
+        const response = await this.fetchSubstitute(url, {
             method,
             headers: {
                 'Content-Type': 'application/json',
