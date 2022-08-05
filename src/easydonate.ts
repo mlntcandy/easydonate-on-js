@@ -99,7 +99,7 @@ export class EasyDonate {
     private async request<T>(method: string, path: string, data: { [key: string]: string | number | boolean | null } | null): Promise<T> {
         let url = `https://easydonate.ru/api/v3/${path}${data ? '?' + new URLSearchParams(formatQuery(data)) : ''}`
         
-        if (this.customRequestMaker) return await this.customRequestMaker(method, url, formatQuery(data))
+        if (this.customRequestMaker) return (await this.customRequestMaker(method, url, formatQuery(data))).response as T
 
         const response = await this.fetchSubstitute(url, {
             method,
